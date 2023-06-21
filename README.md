@@ -1,4 +1,5 @@
 # Genomic-to-space measurements reveal global ocean nutrient stress
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8065231.svg)](https://doi.org/10.5281/zenodo.8065231)
 
 Code to accompany the manuscript: Genomic-to-space measurements reveal global ocean nutrient stress, and description of data files.
 
