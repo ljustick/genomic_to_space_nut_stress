@@ -1,4 +1,3 @@
-# Random Forest
 # Script by Lucas Ustick
 # Compare genes and satellite measurements using random forest
 
