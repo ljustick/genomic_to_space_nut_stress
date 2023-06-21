@@ -5,7 +5,7 @@
 sat_data <- readRDS("sat_matchup_data.RData")
 all_data <- read.csv("in_situ_data.csv")
 
-#Find best fit for RF model ####
+# Find best fit for RF model ####
 library(randomForest)
 
 nut_fits <- matrix(ncol = 15, nrow = 6)
@@ -60,9 +60,39 @@ for (i in 1:90) { #improvement from smaller fits
   
 } 
 
+# Vsualize
+library(ggplot2)
+plot1 <- ggplot(df, aes(x = x, y = y, fill = R2)) +
+  geom_tile() +
+  geom_text(aes(label = round(R2, digits=2)), color = "black") +
+  scale_x_discrete(limits=1:6,labels=c("1P","3x3P","5x5P","1x1D","2x2D","5x5D")) +
+  scale_y_discrete(limits=1:15,labels=c("±2D","±4D","±6D","±8D","±10D","±12D"
+                                        ,"±14D","±16D","±18D","±20D","±22D"
+                                        ,"±24D","±26D","±28D","±30D")) +
+  xlab("Space") +
+  ylab("Time") +
+  ggtitle("R (t,s)")+
+  scale_fill_distiller(palette = "RdYlBu")
 
+library(ggplot2)
+plot2 <- ggplot(df_2, aes(x = x, y = y, fill = V4)) +
+  geom_tile() +
+  geom_text(aes(label = round(V4, digits=2)), color = "black") +
+  scale_x_discrete(limits=1:6,labels=c("1P","3x3P","5x5P","1x1D","2x2D","5x5D")) +
+  scale_y_discrete(limits=1:15,labels=c("±2D","±4D","±6D","±8D","±10D","±12D"
+                                        ,"±14D","±16D","±18D","±20D","±22D"
+                                        ,"±24D","±26D","±28D","±30D")) +
+  xlab("Space") +
+  ylab("Time") +
+  ggtitle("P (t,s)")+
+  scale_fill_distiller(palette = "RdYlBu")
 
-#Run the best model####
+library(ggpubr) #package for combining ggplots
+ggarrange(plot1,plot2,
+          labels = c("A)", "B)"),
+          ncol = 2, nrow = 1)
+
+# Run the best model####
 library(randomForest)
 library(pdp)
 
@@ -101,3 +131,54 @@ colnames(n_p_range) <- c("n_lim","p_lim")
 ni_n_partial_final <- partial(best_rf,pred.var = c("nitri","n_lim"),pred.grid=ni_n_range, chull = TRUE)
 n_p_partial_final <- partial(best_rf,pred.var = c("n_lim","p_lim"),pred.grid=n_p_range, chull = TRUE)
 
+# comparison of in situ with remote sensing ####
+
+# prep data
+lat <- all_data$LatitudeDegN[samp]
+lon <- all_data$LongitudeDegE[samp]
+samples <- all_data$Sample[samp]
+p_conc <- all_data$phosphate[samp]
+n_conc <- all_data$nitrate[samp]
+SST <- all_data$SST_underway[samp]
+diff <- (nut_sat-rf_pred)
+model_data <- as.data.frame(cbind(omega_nitri,nut_sat,rf_pred,n_conc,p_conc,SST,diff,lat,lon,samples))
+
+model_data <- transform(model_data,
+                        p_lim=as.numeric(p_lim),
+                        n_lim=as.numeric(n_lim),
+                        nitri=as.numeric(nitri),
+                        nut_sat=as.numeric(nut_sat),
+                        rf_pred=as.numeric(rf_pred),
+                        n_conc=as.numeric(n_conc),
+                        p_conc=as.numeric(p_conc),
+                        SST=as.numeric(SST),
+                        diff=as.numeric(diff),
+                        lat=as.numeric(lat),
+                        lon=as.numeric(lon),
+                        samples=samples
+                        )
+
+# pearson correlations
+plim_test <- cor.test(model_data$nut_sat,model_data$p_lim ,method = "pearson")
+nlim_test <- cor.test(model_data$nut_sat,model_data$n_lim ,method = "pearson")
+sst_test <- cor.test(model_data$nut_sat,model_data$SST ,method = "pearson")
+nitri_test <- cor.test(model_data$nut_sat,model_data$nitri ,method = "pearson")
+pconc_test <- cor.test(model_data$nut_sat,model_data$p_conc ,method = "pearson")
+nconc_test <- cor.test(model_data$nut_sat,model_data$n_conc ,method = "pearson")
+
+Category<-c("ΩP","ΩN","SST","Nutricline","PO4","NO3")
+Pearson_corr<-c(plim_test[4][[1]][[1]],nlim_test[4][[1]][[1]],sst_test[4][[1]][[1]],nitri_test[4][[1]][[1]],pconc_test[4][[1]][[1]],nconc_test[4][[1]][[1]])
+pearson_pvals<-c(plim_test[3][[1]][[1]],nlim_test[3][[1]][[1]],sst_test[3][[1]][[1]],nitri_test[3][[1]][[1]],pconc_test[3][[1]][[1]],nconc_test[3][[1]][[1]])
+pearson_df<-data.frame(cbind(Category,Pearson_corr,c(1:6),pearson_pvals))
+pearson_df <- transform(pearson_df,
+                        Pearson_corr=as.numeric(Pearson_corr)
+)
+
+# Visualize
+library(ggplot2)
+ggplot(pearson_df,aes(y=Pearson_corr,x=V3))+
+  geom_bar(stat="identity")+
+  scale_x_discrete(labels=Category)+
+  ylab("Pearson Correlation Coefficient")+
+  xlab("")+
+  theme_bw()
