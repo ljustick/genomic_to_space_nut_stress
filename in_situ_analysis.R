@@ -182,3 +182,92 @@ ggplot(pearson_df,aes(y=Pearson_corr,x=V3))+
   ylab("Pearson Correlation Coefficient")+
   xlab("")+
   theme_bw()
+
+# Transect plots ####
+library(ggplot2)
+
+#AMT
+samps_fig=12:70
+name="AMT"
+
+theme2 <-theme(panel.background = element_blank() #remove background
+               ,panel.grid.major = element_blank()
+               ,panel.grid.minor = element_blank()
+               ,strip.background=element_blank()
+               ,axis.text.x=element_text(colour="black") #make all text black
+               ,axis.text.y=element_text(colour="black") #make all text black
+               ,axis.ticks=element_line(colour="black") #make all text black
+               ,axis.line.x=element_line(size=.5)
+               ,axis.line.y=element_line(size=.5)
+)
+
+point_size=1
+line_size=.5
+
+cols1 <- c("SAT"="#FE6100","RF"="#785EF0")
+fig1 <- ggplot(model_data[samps_fig,], aes(x=lat)) +
+  labs(y="Θ'",x="",color="data")+ #remove name from labs
+  #RF prediction
+  geom_point( aes(y=rf_pred,color="RF"),size=point_size,shape=15)+
+  geom_smooth(aes(y=rf_pred), span = 0.3, se = FALSE, color="#785EF0",size=line_size)+
+  #satelite data
+  geom_point( aes(y=nut_sat,color="SAT"),size=point_size,shape=15)+
+  geom_smooth(aes(y=nut_sat), span = 0.3, se = FALSE, color="#FE6100",size=line_size)+
+  #add in custom legend
+  scale_colour_manual(name="data",values=cols1)+
+  theme2+
+  theme(legend.position = "none")
+
+
+cols2 <- c("P"="#648FFF","N"="#FFB000", "Nutricline"="#000000")
+coeff2 <- 75
+fig2 <- ggplot(model_data[samps_fig,], aes(x=lat)) +
+  labs(x="")+
+  #P lim
+  geom_point( aes(y=p_lim,color="P"),size=point_size)+
+  geom_smooth(aes(y=p_lim), span = 0.3, se = FALSE, color="#648FFF",size=line_size)+
+  #N Lim
+  geom_point( aes(y=n_lim,color="N"),size=point_size)+
+  geom_smooth(aes(y=n_lim), span = 0.3, se = FALSE, color="#FFB000",size=line_size)+
+  #Nutricline
+  geom_point( aes(y=(nitri/coeff2)-1,color="Nutricline"),size=point_size,shape=6)+
+  geom_smooth(aes(y=(nitri/coeff2)-1), span = 0.3, se = FALSE, color="#000000",size=line_size,linetype="dashed")+
+  # Add in second axis for Nitricline
+  scale_y_continuous(name = "Ω",sec.axis = sec_axis(~.*coeff2+coeff2, name="Nutricline Depth (M)"),limits=c(-1,3) )+
+  #add in custom legend
+  scale_colour_manual(name="Ω",values=cols2)+
+  theme2+
+  theme(legend.position = "none")
+
+cols3 <- c("P"="#648FFF","N"="#FFB000", "Temp"="#000000")
+coeff3 <- 3.2
+fig3 <- ggplot(model_data[samps_fig,], aes(x=lat)) +
+  labs(x="Latitude Degrees N",y="Concentration")+
+  #Phosphate
+  geom_point( aes(y=p_conc,color="P"),size=point_size,shape=5)+
+  geom_smooth(aes(y=p_conc), span = 0.3, se = FALSE, color="#648FFF",size=line_size)+
+  #Nitrate
+  geom_point( aes(y=n_conc,color="N"),size=point_size,shape=5)+
+  geom_smooth(aes(y=n_conc), span = 0.3, se = FALSE, color="#FFB000",size=line_size)+
+  #Temperature
+  geom_point( aes(y=(SST/coeff3),color="Temp"),size=point_size,shape=8)+
+  geom_smooth(aes(y=(SST/coeff3)), span = 0.3, se = FALSE, color="#000000",size=line_size,linetype="dashed")+
+  # Add in second axis for Temperature
+  scale_y_continuous(name = "Concentration",sec.axis = sec_axis(~.*coeff3, name="Temperature (Deg C)"),limits=c(0,10) )+
+  #add in custom legend
+  scale_colour_manual(name="Concentration",values=cols3)+
+  theme2+
+  theme(legend.position = "none")
+
+#https://cran.r-project.org/web/packages/egg/vignettes/Ecosystem.html
+library(grid)
+library(gtable)
+library(gridExtra)
+g1 <- ggplotGrob(fig1)
+g2 <- ggplotGrob(fig2)
+g3 <- ggplotGrob(fig3)
+g <- rbind(g1, g2, g3, size = "first")
+g$widths <- unit.pmax(g1$widths, g2$widths, g3$widths)
+
+grid.newpage()
+grid.draw(g)
