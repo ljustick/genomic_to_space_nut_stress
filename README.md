@@ -10,13 +10,13 @@ in_situ_data.csv
 - csv file containing *in situ* measurements. Collection of metadata from Ustick *et al.* 2021 https://doi.org/10.1126/science.abe6301.
 
 sat_matchup_data.RData
-- Theta prime observations averaged across different time and spatial scales matched to the time and sampling location of metagenomic samples. Stored as RData file.
+- Theta prime observations averaged across different time and spatial scales matched to the time and sampling location of metagenomic samples. Saved as RData file.
 
 thPrime_1degree_032223.mat
-- Global theta prime observations, averaged in 1 degree across 8 day windows.
+- Global theta prime observations, averaged in 1 degree across 8 day windows. Saved as matlab data file.
 
 modisSST_1degree8Day.mat
-- Sea surface temperature, averaged in 1 degree across 8 day windows.
+- Sea surface temperature, averaged in 1 degree across 8 day windows. Saved as matlab data file.
 
 
 ## Code
