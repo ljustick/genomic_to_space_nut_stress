@@ -41,10 +41,10 @@ library(reshape)
 df <- melt(nut_fits)
 colnames(df) <- c("x", "y", "R2")
   
-# Df_2 contains all p(t,s) scores
+# Df_2 contains all k(t,s) scores
 df_2 <- df
 
-#check previous best fit, calculate p(t,s) score (eq 1&2 in the methods)
+#check previous best fit, calculate k(t,s) score (eq 1&2 in the methods)
 for (i in 1:90) { #improvement from smaller fits
   tm = df[i,2] #1-15
   sp = df[i,1] #1-6
