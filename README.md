@@ -4,7 +4,7 @@
 Code to accompany the manuscript: Genomic-to-space measurements reveal global ocean nutrient stress, and description of data files.
 
 ## Data files
-The following data files can be downloaded here: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8064616.svg)](https://doi.org/10.5281/zenodo.8064616)
+The following data files can be downloaded here: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8064615.svg)](https://doi.org/10.5281/zenodo.8064615)
 
 
 in_situ_data.csv
