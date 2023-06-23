@@ -21,6 +21,10 @@ modisSST_1degree8Day.mat
 
 
 ## Code
+calc_thetaprime.m
+- Matalab script for calculating theta prime from remote sensing products.
+- Written by: Toby K. Westberry
+
 in_situ_analysis.R
 - R script for selecting best spatial and temporal matchup between remote sensing and in situ data, and for Random Forest Analysis.
 - Written by: Lucas J. Ustick
