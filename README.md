@@ -10,20 +10,20 @@ data_insitu_v2_25-04.csv
 - csv file containing *in situ* measurements. Collection of metadata from Ustick *et al.* 2021 https://doi.org/10.1126/science.abe6301.
 
 sat_data_v2_25-04
-- Theta prime observations averaged across different time and spatial scales matched to the time and sampling location of metagenomic samples. Saved as separate csv files.
+- Theta prime observations averaged across different time and spatial scales matched to the time and sampling location of metagenomic samples. Saved as a merged xlsx file and separate csv files .
 
-thPrime_1degree_032223.mat
-- Global theta prime observations, averaged in 1 degree across 8 day windows. Saved as matlab data file.
+theta_v2_25-04.csv
+- Global theta prime observations, averaged in 1 degree across 8 day windows. Saved as a csv file with the first two rows and columns representing the Year, Day, Degree Latitude, and Degree Longitude, with the cells containing the corresponding values across these four variables.
 
-modisSST_1degree8Day.mat
-- Sea surface temperature, averaged in 1 degree across 8 day windows. Saved as matlab data file.
+SST_v2_25-04.csv
+- Sea surface temperature, averaged in 1 degree across 8 day windows. Saved as a csv file with the first two rows and columns representing the Year, Day, Degree Latitude, and Degree Longitude, with the cells containing the corresponding values across these four variables.
 
 ## Code
 calc_thetaprime_v2.m
 - Matalab script for calculating theta prime from remote sensing products.
 - Written by: Toby K. Westberry
 
-in_situ_analysis_v2.R
+random_forest_analysis_v2.R
 - R script for selecting best spatial and temporal matchup between remote sensing and in situ data, and for Random Forest Analysis.
 - Written by: Lucas J. Ustick
 
